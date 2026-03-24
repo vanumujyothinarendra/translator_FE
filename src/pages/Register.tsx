@@ -13,35 +13,40 @@ const Register = ({ onLogin }: RegisterProps) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (values: Record<string, string>) => {
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
 
-    if (values.password !== values.confirmPassword) {
-      setError("Passwords do not match.");
-      setLoading(false);
-      return;
-    }
+  console.log("FORM VALUES:", values); // ✅ debug
 
-    try {
-      const res = await registerUser({
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        confirm_password: values.confirmPassword,
-      });
+  if (values.password !== values.confirmPassword) {
+    setError("Passwords do not match.");
+    setLoading(false);
+    return;
+  }
 
-      console.log("Register success:", res.data);
+  try {
+    const res = await registerUser({
+      username: values.username,
+      email: values.email,
+      password: values.password,
+      confirm_password: values.confirmPassword,
+    });
 
-      // Redirect to login after successful registration
-      navigate("/login");
+    console.log("Register success:", res.data);
+    navigate("/login");
 
-    } catch (err: any) {
-      console.error(err);
+  } catch (err: any) {
+    console.error(err);
+
+    if (err.response?.data) {
+      setError(JSON.stringify(err.response.data)); // ✅ REAL ERROR
+    } else {
       setError("Registration failed. Try again.");
     }
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return (
     <AuthForm
@@ -51,7 +56,7 @@ const Register = ({ onLogin }: RegisterProps) => {
         { name: "username", label: "Username", type: "text", placeholder: "johndoe" },
         { name: "email", label: "Email", type: "email", placeholder: "you@example.com" },
         { name: "password", label: "Password", type: "password", placeholder: "••••••••" },
-        { name: "confirm_password", label: "Confirm Password", type: "password", placeholder: "••••••••" },
+        { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "••••••••" },
       ]}
       submitLabel="Create Account"
       onSubmit={handleSubmit}
