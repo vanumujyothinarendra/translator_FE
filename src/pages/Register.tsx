@@ -51,7 +51,7 @@ const Register = ({ onLogin }: RegisterProps) => {
         { name: "username", label: "Username", type: "text", placeholder: "johndoe" },
         { name: "email", label: "Email", type: "email", placeholder: "you@example.com" },
         { name: "password", label: "Password", type: "password", placeholder: "••••••••" },
-        { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "••••••••" },
+        { name: "confirm_password", label: "Confirm Password", type: "password", placeholder: "••••••••" },
       ]}
       submitLabel="Create Account"
       onSubmit={handleSubmit}
