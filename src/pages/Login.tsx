@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
+import { loginUser } from "@/lib/auth";
 
 interface LoginProps {
   onLogin: (user: { username: string; email: string; token: string }) => void;
@@ -14,20 +15,31 @@ const Login = ({ onLogin }: LoginProps) => {
   const handleSubmit = async (values: Record<string, string>) => {
     setLoading(true);
     setError("");
-    // Simulate API call — replace with actual backend call
-    setTimeout(() => {
-      if (values.email && values.password) {
-        onLogin({
-          username: values.email.split("@")[0],
-          email: values.email,
-          token: "demo-token-" + Date.now(),
-        });
-        navigate("/");
-      } else {
-        setError("Please fill in all fields.");
-      }
-      setLoading(false);
-    }, 1000);
+
+    try {
+      const res = await loginUser({
+        username_or_email: values.email,
+        password: values.password,
+      });
+
+      const token = res.data.access;
+
+      // store JWT token
+      localStorage.setItem("token", token);
+
+      onLogin({
+        username: values.email.split("@")[0],
+        email: values.email,
+        token: token,
+      });
+
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError("Invalid email or password");
+    }
+
+    setLoading(false);
   };
 
   return (

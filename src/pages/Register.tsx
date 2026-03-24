@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
+import { registerUser } from "@/lib/auth";
 
 interface RegisterProps {
   onLogin: (user: { username: string; email: string; token: string }) => void;
@@ -14,20 +15,32 @@ const Register = ({ onLogin }: RegisterProps) => {
   const handleSubmit = async (values: Record<string, string>) => {
     setLoading(true);
     setError("");
+
     if (values.password !== values.confirmPassword) {
       setError("Passwords do not match.");
       setLoading(false);
       return;
     }
-    setTimeout(() => {
-      onLogin({
+
+    try {
+      const res = await registerUser({
         username: values.username,
         email: values.email,
-        token: "demo-token-" + Date.now(),
+        password: values.password,
+        confirm_password: values.confirmPassword,
       });
-      navigate("/");
-      setLoading(false);
-    }, 1000);
+
+      console.log("Register success:", res.data);
+
+      // Redirect to login after successful registration
+      navigate("/login");
+
+    } catch (err: any) {
+      console.error(err);
+      setError("Registration failed. Try again.");
+    }
+
+    setLoading(false);
   };
 
   return (

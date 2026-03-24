@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+ import { motion } from "framer-motion";
 import { Copy, Check, Volume2 } from "lucide-react";
 import { useState } from "react";
 
